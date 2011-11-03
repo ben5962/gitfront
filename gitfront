@@ -57,7 +57,7 @@ return $res
 function upload(){
 git add *
 git commit -a -m "up!"
-git push oringin master
+git push origin master
 }
 
 
