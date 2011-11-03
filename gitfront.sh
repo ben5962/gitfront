@@ -1,0 +1,97 @@
+#!/bin/bash
+set -o nounset
+SUCCES=0
+ERR_NB_ARG=65
+NB_ARG_OK=0
+ECHEC_GIT1=128
+ECHEC_GIT2=1
+ERR_PARSE=165
+PARSE_OK=0
+function usage(){
+cat << finusage
+gitfront --download 
+récupère le projet compta.bash sur github
+gitfront --upload 
+envoie le projet sur github
+finusage
+}
+
+
+function aumoinsun(){
+# un argument: --download ou --upload
+if [ ! "$#" == "1" ];
+then 
+usage
+return $ERR_NB_ARG
+else
+return $NB_ARG_OK
+fi
+}
+
+
+function affiche_test(){
+if [ "$1" ==  "$2" ];
+then echo "[OK]"
+else echo "[KO]"
+fi
+}
+
+
+function test_rep_existe(){
+test -d "$1"
+}
+
+function download(){
+COMMANDE="git clone git@github.com:ben5962/bash_compta.git"
+eval "$COMMANDE"
+}
+
+function wrongdownload(){
+git clone git@github.com:ben5962/bash.git
+res="$?"
+echo "err: $res" 1>&2
+return $res
+}
+
+
+function upload(){
+git add *
+git commit -a -m "up!"
+git push oringin master
+}
+
+
+function getlongopt(){
+while getopts ":-:" OPT
+do
+	case $OPT in
+		-) LONGOPT="${OPTARG%%=*}";
+			echo "$LONGOPT";
+			return "$PARSE_OK";
+			;;
+		*) echo "pas prévu"; return "$ERR_PARSE";;
+	esac
+done
+
+}
+
+function interface(){
+OP="$(getlongopt "$@")"
+case $OP in
+	download) download;;
+	upload) upload;;
+esac
+}
+
+function tests(){
+echo "aumoinsun : erreur $ERR_NB_ARG si aucun arg $(RES="$(aumoinsun;)";  ERR="$?"; affiche_test ${ERR_NB_ARG} ${ERR})"
+echo "aumoinsun : err $NB_ARG_OK si nb arg ok $(RES="$(aumoinsun "dsqfd")"; ERR="$?"; affiche_test ${NB_ARG_OK} ${ERR})"
+#echo "download : err $SUCCES si le download fonctionne $(RES="$(download;)"; ERR="$?"; affiche_test ${SUCCES} ${ERR})"
+#echo "download : err $ECHEC_GIT1 si le downlaod ne fonctionne pas $(RES="$(wrongdownload)"; ERR="$?"; affiche_test ${ECHEC_GIT1} ${ERR})"
+echo "getlongopt : err  $PARSE_OK si l getlongopt comprend les options longues $(PARAM="download"; RES="$( getlongopt "--${PARAM}" )"; affiche_test ${RES} ${PARAM})" 
+}
+
+#tests
+#getlongopt "$@"
+aumoinsun "$@"
+interface "$@"
