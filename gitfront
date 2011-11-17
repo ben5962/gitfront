@@ -57,7 +57,7 @@ return $res
 function upload(){
 git add *
 echo "quel pb avez-vous attaqué avec ces modifs? ok?"
-read INTENTION
+read INTENSION
 echo "quel est le résultat?"
 read RESULTAT
 echo "quelle est l'action suivante à entreprendre?"
