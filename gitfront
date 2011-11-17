@@ -56,7 +56,13 @@ return $res
 
 function upload(){
 git add *
-git commit -a -m "up!"
+echo "quel pb avez-vous attaqué avec ces modifs? ok?"
+read INTENTION
+echo "quel est le résultat?"
+read RESULTAT
+echo "quelle est l'action suivante à entreprendre?"
+read NEXT
+git commit -a -m "pb attaqué: $INTENSION résultat: $RESULTAT next: $NEXT"
 git push origin master
 }
 
